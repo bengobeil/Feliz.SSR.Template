@@ -16,6 +16,8 @@ ProjectSection(SolutionItems) = preProject
 	build.fsx = build.fsx
 EndProjectSection
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Shared", "src\Shared\Shared.fsproj", "{55445441-D1E8-43CC-9B13-DD67A32D35F1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,6 +32,10 @@ Global
 		{7821B727-268F-44AD-8136-B300B323F578}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7821B727-268F-44AD-8136-B300B323F578}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7821B727-268F-44AD-8136-B300B323F578}.Release|Any CPU.Build.0 = Release|Any CPU
+		{55445441-D1E8-43CC-9B13-DD67A32D35F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{55445441-D1E8-43CC-9B13-DD67A32D35F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{55445441-D1E8-43CC-9B13-DD67A32D35F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{55445441-D1E8-43CC-9B13-DD67A32D35F1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

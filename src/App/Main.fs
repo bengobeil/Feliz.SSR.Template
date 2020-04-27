@@ -1,18 +1,23 @@
-module Main
+namespace Template
 
-open Fable.Core.JsInterop
+module Main =
 
-importAll "../../styles/main.scss"
+    open Fable.Core.JsInterop
 
-open Elmish
-open Elmish.React
-open Elmish.Debug
-open Elmish.HMR
+    importAll "../../styles/main.scss"
 
-// App
-Program.mkProgram App.init App.update App.render
-#if DEBUG
-|> Program.withDebugger
-#endif
-|> Program.withReactSynchronous "feliz-app"
-|> Program.run
+    open Elmish
+    open Elmish.React
+    
+    #if DEBUG
+    open Elmish.Debug
+    open Elmish.HMR
+    #endif
+
+    // App
+    Program.mkProgram App.init App.update Shared.render
+    #if DEBUG
+    |> Program.withDebugger
+    #endif
+    |> Program.withReactSynchronous "feliz-app"
+    |> Program.run
