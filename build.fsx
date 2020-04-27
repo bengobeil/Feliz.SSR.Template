@@ -17,6 +17,7 @@ open Fake.Core.TargetOperators
 Target.initEnvironment ()
 
 let clientPath = Path.getFullName "./src/App"
+let serverPath = Path.getFullName "./src/Server"
 
 let platformTool tool winTool =
     let tool = if Environment.isUnix then tool else winTool
@@ -57,6 +58,7 @@ let openBrowser url =
 Target.create "Clean" (fun _ ->
     !! "src/**/bin"
     ++ "src/**/obj"
+    ++ "deploy"
     |> Shell.cleanDirs 
 )
 
@@ -71,6 +73,9 @@ Target.create "InstallClient" (fun _ ->
 
 
 Target.create "Run" (fun _ ->
+    let server = async {
+        runDotNet "watch run" serverPath
+    }
     let client = async {
         runTool npmTool "start" __SOURCE_DIRECTORY__
     }
@@ -81,7 +86,8 @@ Target.create "Run" (fun _ ->
     let vsCodeSession = Environment.hasEnvironVar "vsCodeSession"
 
     let tasks =
-        [ yield client
+        [ yield server
+          yield client
           if not vsCodeSession then yield browser ]
         
     tasks
@@ -91,6 +97,7 @@ Target.create "Run" (fun _ ->
 )
 
 Target.create "Build" (fun _ ->
+    runDotNet "build" serverPath
     runTool npmTool "run build" __SOURCE_DIRECTORY__
 )
 
