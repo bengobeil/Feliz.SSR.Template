@@ -1,0 +1,7 @@
+.ionide/
+.paket/
+node_modules/
+packages/
+paket-files/
+**/bin/*
+**/obj/*
