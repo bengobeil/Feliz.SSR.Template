@@ -5,12 +5,16 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".paket", ".paket", "{568D134B-C8BD-4142-B356-D86197301511}"
 	ProjectSection(SolutionItems) = preProject
 		paket.dependencies = paket.dependencies
-		..\paket.dependencies = ..\paket.dependencies
 	EndProjectSection
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "App", "src\App\App.fsproj", "{E5DEFC96-37CF-4844-9C9E-CFA0A9A8AED3}"
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Tests", "tests\Tests.fsproj", "{7821B727-268F-44AD-8136-B300B323F578}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".fake", ".fake", "{85B744C4-2786-4C96-87AC-25D0AA4A3BCC}"
+ProjectSection(SolutionItems) = preProject
+	build.fsx = build.fsx
+EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -5,3 +5,6 @@ packages/
 paket-files/
 **/bin/*
 **/obj/*
+.fake/
+.idea/
+deploy/
