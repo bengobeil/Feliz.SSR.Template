@@ -3,8 +3,12 @@ namespace Template
 open Elmish
 open Shared
 
+open Fable.Core.JsInterop
+
 module App =
-    let init() = { Count = 0 }, Cmd.none
+    let init () : State * Cmd<Msg> =
+        let model : State = Browser.Dom.window?__INIT_STATE__
+        model, Cmd.none
 
     let update (msg: Msg) (state: State) =
         match msg with

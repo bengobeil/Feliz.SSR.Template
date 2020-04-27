@@ -74,7 +74,7 @@ Target.create "InstallClient" (fun _ ->
 
 Target.create "Run" (fun _ ->
     let server = async {
-        runDotNet "watch run" serverPath
+        runDotNet "watch run" serverPath    
     }
     let client = async {
         runTool npmTool "start" __SOURCE_DIRECTORY__

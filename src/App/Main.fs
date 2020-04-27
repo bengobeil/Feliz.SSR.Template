@@ -19,5 +19,5 @@ module Main =
     #if DEBUG
     |> Program.withDebugger
     #endif
-    |> Program.withReactSynchronous "feliz-app"
+    |> Program.withReactHydrate "feliz-app"
     |> Program.run
