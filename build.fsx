@@ -70,6 +70,10 @@ Target.create "InstallClient" (fun _ ->
     runTool npmTool "install" __SOURCE_DIRECTORY__
     runDotNet "restore" clientPath
 )
+//
+//Target.create "GenerateIndexHtml" (fun _ ->
+//    
+//)
 
 
 Target.create "Run" (fun _ ->
@@ -96,14 +100,22 @@ Target.create "Run" (fun _ ->
     |> ignore
 )
 
-Target.create "Build" (fun _ ->
-    runDotNet "build" serverPath
+Target.create "Production: Build Server" (fun _ ->
+    runDotNet "build --configuration Release" serverPath
+)
+
+#r "src/Server/bin/Release/netstandard2.1/Server.dll"
+Target.create "Production: Generate index.html" (fun _ ->
+
+)
+Target.create "Production: Build Client" (fun _ ->
     runTool npmTool "run build" __SOURCE_DIRECTORY__
 )
 
 "Clean"
     ==> "InstallClient"
-    ==> "Build"
+    ==> "Production: Build Server"
+    ==> "Production: Build Client"
 
 "Clean"
     ==> "InstallClient"

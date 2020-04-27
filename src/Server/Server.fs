@@ -2,7 +2,7 @@
 
 open Feliz
 
-module Say =
+module Server =
     let rand = System.Random()
     
     let initialState () :Shared.State =
