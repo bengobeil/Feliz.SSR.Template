@@ -2,7 +2,7 @@ module Main
 
 open Fable.Core.JsInterop
 
-importAll "../styles/main.scss"
+importAll "../../styles/main.scss"
 
 open Elmish
 open Elmish.React

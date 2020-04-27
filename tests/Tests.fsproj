@@ -7,7 +7,7 @@
     <Compile Include="Tests.fs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\src\App.fsproj" />
+    <ProjectReference Include="..\src\App\App.fsproj" />
   </ItemGroup>
   <Import Project="..\.paket\Paket.Restore.targets" />
 </Project>
