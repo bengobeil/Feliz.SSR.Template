@@ -1,12 +1,25 @@
 ﻿namespace Template
 
+
 open Feliz.ViewEngine
-open System
+open Template.ViewEngine
+    
+[<RequireQualifiedAccess>]   
+module App =
+   open Elmish
+   
+   let getDependencies initialState: App.Dependencies =
+       ElmishComponentAggregate.konstAggregate initialState
+       
+   let toServer (initialState: Counter.State) =
+        getDependencies initialState
+        |> fun deps -> RootRender.getReactElement App.render deps initialState
 
 module Server =
+    
     let rand = System.Random()
     
-    let initialState () :Shared.State =
+    let initialState (): Counter.State =
         {Count = rand.Next(0,50)}
     
     let makeInitialHtml model =
@@ -39,9 +52,9 @@ module Server =
         let body =
             Html.body [
                 Html.div [
-                    prop.id "feliz-app"
+                    prop.id App.name
                     prop.children [
-                        Shared.render' model ignore ()
+                        App.toServer model
                     ]
                 ]
                 Html.script [

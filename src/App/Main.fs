@@ -1,9 +1,9 @@
 namespace Template
 
+#if FABLE_COMPILER
 module Main =
     open Fable.Core.JsInterop
     
-    #if FABLE_COMPILER
     importAll "../../styles/main.scss"
     
     open Browser.Dom
@@ -11,4 +11,21 @@ module Main =
 
 //    let initState = App.init ()
 //    ReactDOM.render(Shared.render' initState App.update (), document.getElementById "feliz-app")
+    
+    open Elmish
+    open Elmish.React
+    #if DEBUG
+    open Elmish.HMR
+    open Elmish.Debug
     #endif
+    
+    // App
+    Program.mkProgram App.init App.update App.render
+    #if DEBUG
+    |> Program.withDebugger
+    |> Program.withReactSynchronous App.name
+    #else
+    |> Program.withReactHydrate App.name
+    #endif
+    |> Program.run
+#endif

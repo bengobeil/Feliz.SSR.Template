@@ -1,16 +1,11 @@
-namespace Template
-
-open Shared
-
-open Fable.Core.JsInterop
+﻿namespace Template
 
 module App =
-    let init () : State =
-        let model : State = Browser.Dom.window?__INIT_STATE__
-        model
-
-    let update (state: State) = function
-        | Increment -> { state with Count = state.Count + 1 }
-        | Decrement -> { state with Count = state.Count - 1 }
-
+    type State = Counter.State
+    type Msg = Counter.Msg
+    
+    let init = Counter.init
+    let update = Counter.update
+    
+    let render (state: State) (dispatch: Msg -> unit) = App.render {Init = init; Update = update} state dispatch
 
