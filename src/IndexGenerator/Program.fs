@@ -8,7 +8,7 @@ open Template
 let main _ =
     Server.initialState()
     |> Server.makeInitialHtml
-    |> Render.htmlView
+    |> Render.htmlDocument
     |> fun content -> File.WriteAllText (sprintf "%s/../Server/index.html" __SOURCE_DIRECTORY__,content)
     0
     

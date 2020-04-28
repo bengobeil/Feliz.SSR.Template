@@ -1,23 +1,15 @@
 namespace Template
 
 module Main =
-
+    
+    #if FABLE_COMPILER
     open Fable.Core.JsInterop
 
     importAll "../../styles/main.scss"
-
-    open Elmish
-    open Elmish.React
     
-    #if DEBUG
-    open Elmish.Debug
-    open Elmish.HMR
-    #endif
+    open Browser.Dom
+    open Feliz
 
-    // App
-    Program.mkProgram App.init App.update Shared.render
-    #if DEBUG
-    |> Program.withDebugger
+//    let initState = App.init ()
+//    ReactDOM.render(Shared.render' initState App.update (), document.getElementById "feliz-app")
     #endif
-    |> Program.withReactHydrate "feliz-app"
-    |> Program.run

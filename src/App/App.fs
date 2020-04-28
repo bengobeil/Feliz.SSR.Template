@@ -1,18 +1,16 @@
 namespace Template
 
-open Elmish
 open Shared
 
 open Fable.Core.JsInterop
 
 module App =
-    let init () : State * Cmd<Msg> =
+    let init () : State =
         let model : State = Browser.Dom.window?__INIT_STATE__
-        model, Cmd.none
+        model
 
-    let update (msg: Msg) (state: State) =
-        match msg with
-        | Increment -> { state with Count = state.Count + 1 }, Cmd.none
-        | Decrement -> { state with Count = state.Count - 1 }, Cmd.none
+    let update (state: State) = function
+        | Increment -> { state with Count = state.Count + 1 }
+        | Decrement -> { state with Count = state.Count - 1 }
 
 

@@ -8,3 +8,4 @@ paket-files/
 .fake/
 .idea/
 deploy/
+src/Server/index.html

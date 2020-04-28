@@ -41,7 +41,7 @@ module Server =
                 Html.div [
                     prop.id "feliz-app"
                     prop.children [
-                        Shared.render model ignore
+                        Shared.render' model ignore ()
                     ]
                 ]
                 Html.script [
