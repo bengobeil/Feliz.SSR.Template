@@ -1,7 +1,8 @@
 ﻿namespace Template
 
 open Elmish
-open Template.ViewEngine
+open Feliz.ElmishTypes
+
 
 [<RequireQualifiedAccess>]
 module Init =
@@ -21,7 +22,7 @@ module ViewEngine =
     
     [<RequireQualifiedAccess>]
     module ElmishComponentAggregate =
-        let private fromServer ({Init = init}: ServerElmishComponentAggregate<_, 'props,'state>): ElmishComponentAggregate<_,'props,'state> =
+        let private fromServer ({Init = init}: ServerElmishComponentAggregate<_, 'props,'state>): ComponentAggregate<_,'props,'state> =
             {Init = init; Update = ignoreUpdate}
         
         let konstAggregate state =

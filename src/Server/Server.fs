@@ -44,8 +44,16 @@ module Server =
                     prop.type' "image/png"
                     prop.href "img/favicon-16x16.png"
                 ]
+                Html.link [
+                    prop.rel "stylesheet"
+                    prop.href "https://cdn.jsdelivr.net/npm/bulma@0.8.2/css/bulma.min.css"
+                ]
                 Html.script [
                     prop.src "https://cdn.polyfill.io/v2/polyfill.js?features=es6"
+                ]
+                Html.script [
+                    prop.defer true
+                    prop.src "https://use.fontawesome.com/releases/v5.3.1/js/all.js"
                 ]
             ]
             

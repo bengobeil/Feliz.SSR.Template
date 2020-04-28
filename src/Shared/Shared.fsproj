@@ -5,7 +5,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="ViewEngine.fs" />
+        <Compile Include="Abbreviations.fs" />
+        <Compile Include="ElmishTypes.fs" />
+        <Compile Include="React.fs" />
         <Compile Include="Counter.fs" />
         <Compile Include="App.fs" />
         <Content Include="paket.references" />

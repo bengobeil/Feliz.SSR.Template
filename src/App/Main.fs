@@ -6,7 +6,6 @@ module Main =
     
     importAll "../../styles/main.scss"
     
-    open Browser.Dom
     open Feliz
 
 //    let initState = App.init ()

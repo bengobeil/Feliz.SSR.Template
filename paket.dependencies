@@ -1,6 +1,8 @@
 source https://api.nuget.org/v3/index.json
 
 nuget fake
+nuget Feliz.bulma
+nuget Feliz.Bulma.ViewEngine
 nuget Feliz.ElmishComponents
 nuget Feliz.ViewEngine
 nuget FSharp.Core

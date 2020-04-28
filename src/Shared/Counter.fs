@@ -1,9 +1,10 @@
 ﻿namespace Template
 
-open Template.ViewEngine
-
 [<RequireQualifiedAccess>]
 module Counter =
+    open Feliz.Shared
+    open Feliz.ElmishTypes
+    
     type State = { Count: int }
 
     type Msg =
@@ -11,13 +12,14 @@ module Counter =
         | Decrement
     
     let private render (state:State) (dispatch:Msg -> unit) =
-        Html.div [
-            Html.button [
+        Bulma.container [
+            button.button [
+                color.isBlack
                 prop.onClick (fun _ -> dispatch Increment)
                 prop.text "Increment"
             ]
     
-            Html.button [
+            button.button [
                 prop.onClick (fun _ -> dispatch Decrement)
                 prop.text "Decrement"
             ]
@@ -25,9 +27,9 @@ module Counter =
             Html.h1 state.Count
         ]
         
-    type Factory = ElmishComponentFactory<Msg, unit, State>
-    type Aggregate = ElmishComponentAggregate<Msg, unit, State>
+    type Factory = ComponentFactory<Msg, unit, State>
+    type Aggregate = ComponentAggregate<Msg, unit, State>
     
     let createCounter: Factory =
-        ViewEngine.elmishComponent "Counter" render
+        React.elmishComponent' "Counter" render
             
