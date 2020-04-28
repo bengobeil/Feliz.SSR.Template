@@ -1,6 +1,10 @@
 ﻿namespace Template
 
+#if FABLE_COMPILER
 open Feliz
+#else
+open Feliz.ViewEngine
+#endif
 
 module Shared =
     type State = { Count: int }

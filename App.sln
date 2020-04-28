@@ -20,6 +20,8 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Shared", "src\Shared\Shared
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Server", "src\Server\Server.fsproj", "{C942098A-9B3F-46A4-AD10-12DDDEAD545A}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "IndexGenerator", "src\IndexGenerator\IndexGenerator.fsproj", "{06E0EC9F-C062-4411-9940-6084C25C0D77}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,6 +44,10 @@ Global
 		{C942098A-9B3F-46A4-AD10-12DDDEAD545A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C942098A-9B3F-46A4-AD10-12DDDEAD545A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C942098A-9B3F-46A4-AD10-12DDDEAD545A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{06E0EC9F-C062-4411-9940-6084C25C0D77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{06E0EC9F-C062-4411-9940-6084C25C0D77}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{06E0EC9F-C062-4411-9940-6084C25C0D77}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{06E0EC9F-C062-4411-9940-6084C25C0D77}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

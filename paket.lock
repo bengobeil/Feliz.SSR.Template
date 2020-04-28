@@ -53,9 +53,16 @@ NUGET
       Fable.Core (>= 3.1.5) - restriction: >= netstandard2.0
       Fable.React (>= 6.0) - restriction: >= netstandard2.0
       FSharp.Core (>= 4.7) - restriction: >= netstandard2.0
+    Feliz.ViewEngine (0.17)
+      FSharp.Core (>= 4.7) - restriction: >= netstandard2.0
     FSharp.Core (4.7.1)
+    Newtonsoft.Json (12.0.3) - restriction: || (>= net46) (>= netstandard2.0)
     Thoth.Json (4.0) - restriction: >= netstandard2.0
       Fable.Core (>= 3.1.4) - restriction: >= netstandard2.0
       FSharp.Core (>= 4.7) - restriction: >= netstandard2.0
+    Thoth.Json.Net (4.0)
+      Fable.Core (>= 3.0 < 4.0) - restriction: && (< net46) (>= netstandard2.0)
+      FSharp.Core (>= 4.6.2) - restriction: || (>= net46) (>= netstandard2.0)
+      Newtonsoft.Json (>= 11.0.2) - restriction: || (>= net46) (>= netstandard2.0)
     Zanaptak.TypedCssClasses (0.2)
       FSharp.Core (>= 4.3.4) - restriction: || (>= net452) (>= netstandard2.0)

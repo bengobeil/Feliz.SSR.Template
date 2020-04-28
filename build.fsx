@@ -18,6 +18,8 @@ Target.initEnvironment ()
 
 let clientPath = Path.getFullName "./src/App"
 let serverPath = Path.getFullName "./src/Server"
+let generatorSourcePath = Path.getFullName "./src/IndexGenerator"
+let generatorExePath = Path.combine generatorSourcePath "./bin/Debug/netcoreapp3.1/IndexGenerator.exe"
 
 let platformTool tool winTool =
     let tool = if Environment.isUnix then tool else winTool
@@ -58,8 +60,11 @@ let openBrowser url =
 Target.create "Clean" (fun _ ->
     !! "src/**/bin"
     ++ "src/**/obj"
-    ++ "deploy"
-    |> Shell.cleanDirs 
+    ++ "./deploy"
+    |> Shell.cleanDirs
+    
+    Path.combine serverPath "./index.html"
+    |> Shell.rm
 )
 
 Target.create "InstallClient" (fun _ ->
@@ -70,16 +75,19 @@ Target.create "InstallClient" (fun _ ->
     runTool npmTool "install" __SOURCE_DIRECTORY__
     runDotNet "restore" clientPath
 )
-//
-//Target.create "GenerateIndexHtml" (fun _ ->
-//    
-//)
 
+Target.create "Generate index.html" (fun _ ->
+    runDotNet "build" generatorSourcePath
+    CreateProcess.fromRawCommand generatorExePath []
+    |> Proc.run
+    |> ignore
+)
+
+Target.create "Production: Build Client" (fun _ ->
+    runTool npmTool "run build" __SOURCE_DIRECTORY__
+)
 
 Target.create "Run" (fun _ ->
-    let server = async {
-        runDotNet "watch run" serverPath    
-    }
     let client = async {
         runTool npmTool "start" __SOURCE_DIRECTORY__
     }
@@ -90,8 +98,7 @@ Target.create "Run" (fun _ ->
     let vsCodeSession = Environment.hasEnvironVar "vsCodeSession"
 
     let tasks =
-        [ yield server
-          yield client
+        [ yield client
           if not vsCodeSession then yield browser ]
         
     tasks
@@ -100,25 +107,18 @@ Target.create "Run" (fun _ ->
     |> ignore
 )
 
-Target.create "Production: Build Server" (fun _ ->
-    runDotNet "build --configuration Release" serverPath
-)
 
-#r "src/Server/bin/Release/netstandard2.1/Server.dll"
-Target.create "Production: Generate index.html" (fun _ ->
-
-)
-Target.create "Production: Build Client" (fun _ ->
-    runTool npmTool "run build" __SOURCE_DIRECTORY__
-)
+Target.create "Build" ignore
 
 "Clean"
     ==> "InstallClient"
-    ==> "Production: Build Server"
+    ==> "Generate index.html"
     ==> "Production: Build Client"
+    ==> "Build"
 
 "Clean"
     ==> "InstallClient"
+    ==> "Generate index.html"
     ==> "Run"
 
 Target.runOrDefaultWithArguments "Build"

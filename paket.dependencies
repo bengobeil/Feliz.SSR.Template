@@ -1,6 +1,7 @@
 source https://api.nuget.org/v3/index.json
 
 nuget fake
+nuget Feliz.ViewEngine
 nuget FSharp.Core
 nuget Fable.Elmish.Debugger
 nuget Fable.Elmish.HMR
@@ -8,3 +9,4 @@ nuget Fable.Elmish.React
 nuget Fable.Mocha
 nuget Feliz
 nuget Zanaptak.TypedCssClasses
+nuget Thoth.Json.Net

@@ -1,6 +1,7 @@
 ﻿namespace Template
 
-open Feliz
+open Feliz.ViewEngine
+open System
 
 module Server =
     let rand = System.Random()
@@ -44,8 +45,9 @@ module Server =
                     ]
                 ]
                 Html.script [
-                    sprintf "var __INIT_STATE__ = %s" (Thoth.Json.Encode.Auto.toString(0,model))
-                    |> prop.text
+                    (Thoth.Json.Net.Encode.Auto.toString(0,model))
+                    |> sprintf "var __INIT_STATE__ = %s" 
+                    |> prop.dangerouslySetInnerHTML
                 ]
             ]
             
