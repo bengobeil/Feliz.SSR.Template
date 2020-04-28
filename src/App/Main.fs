@@ -1,10 +1,9 @@
 namespace Template
 
 module Main =
+    open Fable.Core.JsInterop
     
     #if FABLE_COMPILER
-    open Fable.Core.JsInterop
-
     importAll "../../styles/main.scss"
     
     open Browser.Dom
