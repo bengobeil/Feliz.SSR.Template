@@ -1,6 +1,5 @@
 ﻿// Learn more about F# at http://fsharp.org
 
-open System
 open System.Reflection
 
 [<RequireQualifiedAccess>]
@@ -8,17 +7,16 @@ module Seq =
     let exclude f =
         Seq.filter (f >> not)
 
-type DiscoverableAssembly = {Name: string; Exclusions: string list }
+type DiscoverableAssembly = {Name: string; Exclusions: string list; IncludeAliases: string list}
 type IsomorphicAssemblyPair = {Client: DiscoverableAssembly; Server: DiscoverableAssembly}
 
 type DiscoveredType =
     | Type of typeName: string
     | InnerModuleType of fullModuleName:string * type': DiscoveredType 
     
-type DiscoveredModule =
-    | RootType of typeName: string
-    | Module of moduleName: string * types: DiscoveredModule list
-    
+type DiscoveredModule<'a> =
+    | RootType of typeName: 'a
+    | Module of moduleName: 'a * types: DiscoveredModule<'a> list
 
     
 module DiscoveredType =
@@ -48,25 +46,31 @@ module DiscoveredModule =
                 |> List.map snd
                 |> fun types -> Module (moduleName, toDiscoveredModule types))
             |> fun modules -> x @ modules
+            
+    let content = function
+        | RootType s -> s
+        | Module (m,_) -> m
+        
+    let rec map f = function
+        | RootType s -> RootType (f s)
+        | Module (m,x) -> Module (f m,x |> List.map (map f))
 
 let (|Type|InnerModuleType|InnerInnerModuleType|Ignore|) (typeName: string) =
-    let removePlus (str:string) = str.TrimStart '+'
+    let trimModule (str: string) = str.Split "Module" |> Array.head
     
-    match typeName.Split "Module" with
-    | [| _; _; "" |] ->
-        Ignore
+    match typeName.Split "+" with
+    | arr when Array.last arr = "" -> Ignore
     | [| moduleFullName; innerModuleName; typeName |] ->
-        InnerInnerModuleType (moduleFullName, removePlus innerModuleName, removePlus typeName)
-    | [| _; "" |] ->
-        Ignore
+        InnerInnerModuleType (trimModule moduleFullName, trimModule innerModuleName, typeName)
     | [| moduleFullName; typeName |] ->
-        InnerModuleType (moduleFullName,removePlus typeName)
+        InnerModuleType (trimModule moduleFullName , typeName)
+    | [| x |] when x.EndsWith "Module" -> Ignore
     | [| x |] -> Type x
     | _ ->
         printf "%s" typeName
         failwithf "Not expected"
 
-let findValidTypes {Name = name; Exclusions = exclusions } = 
+let findValidTypes {Name = name; Exclusions = exclusions; IncludeAliases = aliases } = 
     let assembly = Assembly.Load(name)
     
     let excludeAssemblySpecific (exclusions:string seq) seq =
@@ -79,7 +83,10 @@ let findValidTypes {Name = name; Exclusions = exclusions } =
     |> Seq.exclude (fun typeName -> typeName.StartsWith "<StartupCode$")
     |> Seq.exclude (fun typeName -> typeName.Contains "@")
     |> excludeAssemblySpecific exclusions
-//    |> Seq.iter (printfn "%s")
+    |> Seq.append aliases
+    
+let discoverModules types =
+    types
     |> Seq.choose (function
         | Ignore -> None
         | Type typeName -> Some <| Type typeName
@@ -88,10 +95,106 @@ let findValidTypes {Name = name; Exclusions = exclusions } =
             Some <| InnerModuleType (qualifiedName, InnerModuleType (sprintf "%s.%s" qualifiedName moduleName, Type(sprintf "%s.%s.%s" qualifiedName moduleName typeName))))
     |> List.ofSeq
     |> DiscoveredModule.toDiscoveredModule
-    |> List.iter (printfn "%A")
     
+let discoverModulesFromAssembly = findValidTypes >> discoverModules
+
+module ViewEngine =
+    let toClientName (str: string) =
+        str.Replace(".ViewEngine","")
+        
+type Presence<'a> =
+    | InBoth of client: 'a * server: 'a
+    | ClientOnly of 'a
+    | ServerOnly of 'a
+
+let discoverModulesForPair {Client = clientDiscoverableAssembly; Server = serverDiscoverableAssembly}: DiscoveredModule<Presence<string>> list =
+    let toClientString =
+        DiscoveredModule.content >> ViewEngine.toClientName
+    
+    let makeMapFromModules modules =
+        modules
+        |> List.map (fun module' -> (DiscoveredModule.content module', module'))
+        |> Map.ofList
+        
+    let rec zipClientServerTypes clientModules serverModules:DiscoveredModule<Presence<string>> list =
+        let clientTypeMap =
+            makeMapFromModules clientModules
+            
+        let serverTypeMap =
+            makeMapFromModules serverModules
+        
+        let findModuleInMap map moduleName =
+            Map.find moduleName map
+            
+        let findClientModule name =
+            findModuleInMap clientTypeMap name
+            
+        let findServerModule name =
+            findModuleInMap serverTypeMap name
+            
+        let clientModuleExists name =
+            Map.containsKey name clientTypeMap
+            
+        serverModules
+        |> List.partition (fun item -> Map.containsKey (toClientString item) clientTypeMap)
+        |> fun (typesInBoth,typesInServerOnly) ->
+            let namesInBoth =
+                typesInBoth
+                |> List.map (fun type' -> (toClientString type', DiscoveredModule.content type'))
+                
+            let serverModulesInServerOnly =
+                typesInServerOnly
+                |> List.map DiscoveredModule.content
+                |> List.map findServerModule
+                |> List.map (DiscoveredModule.map ServerOnly)
+                
+            let clientModulesInClientOnly =
+                namesInBoth
+                |> List.map fst
+                |> List.partition clientModuleExists
+                |> snd
+                |> List.map findClientModule
+                |> List.map (DiscoveredModule.map ClientOnly)
+            
+            let modulesInBoth =
+                namesInBoth
+                |> List.map (fun (clientName,serverName) ->
+                    (findClientModule clientName, findServerModule serverName)
+                    |> function
+                        | RootType cname, RootType sname ->
+                            RootType <| InBoth (cname,sname)
+                        | Module (cmname, csubModules),Module (smname, ssubModules) ->
+                            Module (InBoth (cmname, smname), zipClientServerTypes csubModules ssubModules)
+                        | _ -> failwith "Should be unreachable")
+                
+                
+            (clientModulesInClientOnly)
+            @ (serverModulesInServerOnly)
+            @ (modulesInBoth)
+            
+    let clientModules =
+        clientDiscoverableAssembly
+        |> discoverModulesFromAssembly
+    
+    let serverModules =
+        serverDiscoverableAssembly
+        |> discoverModulesFromAssembly
+    
+    zipClientServerTypes clientModules serverModules
+        
 [<EntryPoint>]
 let main argv =
+    let felizBulma = 
+        { Name = "Feliz.Bulma"
+          Exclusions = [
+              "Feliz.Bulma.ElementBuilders"
+              "Feliz.Bulma.PropertyBuilders"
+              "Feliz.Bulma.ClassLiterals"
+              "Feliz.Bulma.Operators"
+              "Feliz.Bulma.ElementLiterals"
+          ]
+          IncludeAliases = [] }
+    
     let felizBulmaViewEngine =
         { Name = "Feliz.Bulma.ViewEngine"
           Exclusions = [
@@ -100,7 +203,35 @@ let main argv =
               "Feliz.Bulma.ViewEngine.ClassLiterals"
               "Feliz.Bulma.ViewEngine.Operators"
               "Feliz.Bulma.ViewEngine.ElementLiterals"
-          ]}
+          ]
+          IncludeAliases = []}
         
-    findValidTypes felizBulmaViewEngine
+    let feliz = {
+        Name = "Feliz"
+        Exclusions = [
+            
+        ]
+        IncludeAliases = [
+        ]
+    }
+    
+    let felizViewEngine = {
+        Name = "Feliz.ViewEngine"
+        Exclusions = [
+            
+        ]
+        IncludeAliases = []
+    }
+    
+    let felizPair =
+        { Client = feliz
+          Server = felizViewEngine }
+    
+    let felizBulmaPair =
+        { Client = felizBulma
+          Server = felizBulmaViewEngine }
+    
+        
+    discoverModulesForPair felizPair
+    |> List.iter (printfn "%A")
     0
