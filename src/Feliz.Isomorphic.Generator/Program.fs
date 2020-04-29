@@ -161,12 +161,14 @@ let discoverModulesForPair {Client = clientDiscoverableAssembly; Server = server
                 |> List.map (fun (clientName,serverName) ->
                     (findClientModule clientName, findServerModule serverName)
                     |> function
-                        | RootType cname, RootType sname ->
-                            RootType <| InBoth (cname,sname)
-                        | Module (cmname, csubModules),Module (smname, ssubModules) ->
-                            Module (InBoth (cmname, smname), zipClientServerTypes csubModules ssubModules)
-                        | _ -> failwith "Should be unreachable")
-                
+                        | RootType cName, RootType sName ->
+                            RootType <| InBoth (cName,sName)
+                        | Module (cName, cSubModules),Module (sName, sSubModules) ->
+                            Module (InBoth (cName, sName), zipClientServerTypes cSubModules sSubModules)
+                        | Module (cName, subModules), RootType sName ->
+                            Module (InBoth (cName, sName), subModules |> List.map (DiscoveredModule.map ClientOnly))
+                        | RootType cName, Module (sName, subModules) ->
+                            Module (InBoth (cName, sName), subModules |> List.map (DiscoveredModule.map ServerOnly)))
                 
             (clientModulesInClientOnly)
             @ (serverModulesInServerOnly)
@@ -212,6 +214,7 @@ let main argv =
             
         ]
         IncludeAliases = [
+            "Feliz.ReactElement"
         ]
     }
     
