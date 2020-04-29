@@ -10,18 +10,11 @@ module App =
     
     let render (counterAggregate: Dependencies) _ _ =
         Bulma.hero [
-            color.isPrimary 
+            color.isPrimary
             prop.children [
                 Bulma.heroHead [
-                    Bulma.navbar [
-                        prop.children [
-                            Bulma.container [
-                                Bulma.notification [
-                                    prop.children [
-                                        Bulma.label "Hi there"
-                                    ]
-                                ]
-                            ]
+                    prop.children [
+                        Bulma.navbar[
                         ]
                     ]
                 ]
